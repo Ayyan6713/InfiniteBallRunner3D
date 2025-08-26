@@ -1,33 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player;         // The player's transform
-    public Vector3 offset;           // Offset between camera and player
-    public float smoothSpeed = 3f;   // How smoothly the camera follows
-    public Vector3 targetposition;
-   
+    [Header("Target Settings")]
+    public Transform target;        // The object for the camera to follow
 
-    private void LateUpdate()
+    [Header("Position Settings")]
+    public Vector3 offset = new Vector3(0, 5, -10);  // Offset from the target
+    public float smoothSpeed = 0.125f;               // Smoothness factor (lower = smoother/slower)
+
+    [Header("Rotation Settings")]
+    public bool followRotation = false;              // Optionally follow target rotation
+    public float rotationSmoothSpeed = 5f;           // Rotation smooth speed
+
+    void LateUpdate()
     {
-       
-        if (player == null) return;
+        if (target == null) return;
 
-        targetposition = new Vector3(transform.position.x, player.position.y+3, player.position.z-5);
-        
-        
+        // Desired position based on target + offset
+        Vector3 desiredPosition = target.position + offset;
 
-        // Follow player on X and Z axis, keep original Y (height)
-        //Vector3 targetPosition = new Vector3(player.position.x + offset.x, transform.position.y, player.position.z + offset.z);
+        // Smoothly interpolate between current and desired position
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
 
-        // Smooth follow
-        transform.position = Vector3.Lerp(transform.position, targetposition, smoothSpeed * Time.fixedDeltaTime);
+        transform.position = smoothedPosition;
 
-        //transform.LookAt(player.position);
+        // Optionally look at target
+        transform.LookAt(target);
+
+        // Optionally smooth rotation
+        if (followRotation)
+        {
+            Quaternion desiredRotation = target.rotation;
+            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSmoothSpeed * Time.deltaTime);
+        }
     }
-
-
 }
-

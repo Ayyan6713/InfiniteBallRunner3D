@@ -9,24 +9,24 @@ public class controller : MonoBehaviour
     public float speed;
     public float moveHorizontal;
 
+    Vector3 movement;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
-
+    private void Update()
+    {
+        movement = new Vector3(moveHorizontal, 0.0f, 1.0f);
+    }
 
     private void FixedUpdate()
     {
-        //moveHorizontal = Input.GetAxis("Horizontal");
-
-        // Always move forward (z = 1)
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, 1.0f);
-        rb.MovePosition(rb.position + movement.normalized * speed * Time.fixedDeltaTime);
-
+        //Vector3 movement = new Vector3(moveHorizontal, 0f, 1f).normalized;
+        rb.velocity = movement * speed;
     }
 
 
-    
+
     public void MoveRightPointerDown()
 
     {
